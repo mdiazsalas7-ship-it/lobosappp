@@ -1,0 +1,19 @@
+/* ========================================
+   LOBOS DE RIBAS — App-level overrides
+   ======================================== */
+
+/* Smooth transitions for interactive elements */
+button, a, input, select {
+  transition: all 0.2s ease;
+}
+
+/* Remove default focus outline, add custom */
+input:focus, select:focus, button:focus-visible {
+  outline: 2px solid var(--lobos-gold);
+  outline-offset: 2px;
+}
+
+/* Placeholder color */
+input::placeholder {
+  color: var(--text-muted);
+}
