@@ -17,7 +17,7 @@ const getStatusStyles = (status) => {
   return { bg: '#222240', text: '#8888aa', label: status || 'Desconocido' };
 };
 
-export default function AthletesPage({ athletes, setAthletes, payments }) {
+export default function AthletesPage({ athletes, setAthletes, payments, isAdmin = false }) {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
   const [filterStatus, setFilterStatus] = useState("todos");
@@ -182,9 +182,11 @@ export default function AthletesPage({ athletes, setAthletes, payments }) {
                   <Btn onClick={shareBirthdayCard} style={{ flex: 1, background: 'linear-gradient(135deg, #c4a35a 0%, #d4b96a 100%)', color: '#0a0a18', fontSize: 13 }}>
                     {isCapturing ? "⏳ Generando..." : "🎉 Compartir Cumpleaños"}
                   </Btn>
-                  <Btn style={{ flex: 1, background: '#1e2d40', color: '#eee', fontSize: 13 }} onClick={startEditing}>
-                    ✏️ Editar
-                  </Btn>
+                  {isAdmin && (
+                    <Btn style={{ flex: 1, background: '#1e2d40', color: '#eee', fontSize: 13 }} onClick={startEditing}>
+                      ✏️ Editar
+                    </Btn>
+                  )}
                 </div>
               </>
             ) : (
@@ -233,11 +235,13 @@ export default function AthletesPage({ athletes, setAthletes, payments }) {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: 12, width: '100%', maxWidth: 380 }}>
-                  <Btn style={{ flex: 1, background: '#1e2d40', color: '#eee', fontSize: 13 }} onClick={startEditing}>
-                    ✏️ Editar Datos
-                  </Btn>
-                </div>
+                {isAdmin && (
+                  <div style={{ display: 'flex', gap: 12, width: '100%', maxWidth: 380 }}>
+                    <Btn style={{ flex: 1, background: '#1e2d40', color: '#eee', fontSize: 13 }} onClick={startEditing}>
+                      ✏️ Editar Datos
+                    </Btn>
+                  </div>
+                )}
               </>
             )}
           </div>

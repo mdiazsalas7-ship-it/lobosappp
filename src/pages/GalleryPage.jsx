@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Btn, Modal } from '../components/UIComponents';
 import { generateId, saveData, uploadFile, formatDate } from '../utils/helpers';
 
-export default function GalleryPage({ gallery, setGallery }) {
+export default function GalleryPage({ gallery, setGallery, isAdmin = false }) {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState(null);
   const fileRef = useRef(null);
@@ -47,12 +47,14 @@ export default function GalleryPage({ gallery, setGallery }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: "#c4a35a", letterSpacing: 2, margin: 0 }}>Galería de Entrenamientos</h2>
         
-        <div>
-          <Btn onClick={() => fileRef.current?.click()} disabled={isUploading}>
-            {isUploading ? "⏳ Subiendo..." : "📷 Subir Archivo"}
-          </Btn>
-          <input type="file" ref={fileRef} hidden accept="image/*,video/*" onChange={handleUpload} />
-        </div>
+        {isAdmin && (
+          <div>
+            <Btn onClick={() => fileRef.current?.click()} disabled={isUploading}>
+              {isUploading ? "⏳ Subiendo..." : "📷 Subir Archivo"}
+            </Btn>
+            <input type="file" ref={fileRef} hidden accept="image/*,video/*" onChange={handleUpload} />
+          </div>
+        )}
       </div>
 
       {gallery.length === 0 && !isUploading && (
@@ -91,9 +93,11 @@ export default function GalleryPage({ gallery, setGallery }) {
             ) : (
               <img src={selectedMedia.url} style={{ width: "100%", maxHeight: "60vh", objectFit: "contain", borderRadius: 12 }} />
             )}
-            <Btn variant="danger" onClick={() => deleteMedia(selectedMedia.id)} style={{ marginTop: 16, width: "100%" }}>
-              🗑 Eliminar Archivo
-            </Btn>
+            {isAdmin && (
+              <Btn variant="danger" onClick={() => deleteMedia(selectedMedia.id)} style={{ marginTop: 16, width: "100%" }}>
+                🗑 Eliminar Archivo
+              </Btn>
+            )}
           </div>
         )}
       </Modal>
