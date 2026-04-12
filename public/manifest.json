@@ -1,0 +1,24 @@
+{
+    "name": "Lobos de Ribas - Escuela de Baloncesto",
+    "short_name": "Lobos",
+    "description": "App de gestión de la Escuela de Baloncesto Lobos de Ribas",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#0f172a",
+    "theme_color": "#0f172a",
+    "icons": [
+      {
+        "src": "/icons/icon-192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "/icons/icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ]
+  }

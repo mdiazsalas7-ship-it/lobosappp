@@ -1,13 +1,47 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+    <!-- PWA Meta -->
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="background-color" content="#0f172a" />
+    <meta name="description" content="App de gestión - Escuela de Baloncesto Lobos de Ribas" />
+    
+    <!-- iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Lobos" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    
+    <!-- Android PWA -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- Icons & Manifest -->
+    <link rel="icon" type="image/png" href="/icons/icon-192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    
+    <title>Lobos de Ribas</title>
+
+    <!-- Splash screen color while loading -->
+    <style>
+      body { margin: 0; background: #0f172a; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Register Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('SW registrado:', reg.scope))
+            .catch(err => console.log('SW error:', err));
+        });
+      }
+    </script>
   </body>
 </html>
