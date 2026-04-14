@@ -10,8 +10,9 @@ const CATEGORIAS_BASKET = [
 // Generamos los números del 0 al 99, agregando el clásico "00" del basket
 const TODOS_LOS_NUMEROS = ["00", ...Array.from({ length: 100 }, (_, i) => String(i))];
 
-export default function RegisterPage({ athletes, setAthletes }) {
+export default function RegisterPage({ athletes, setAthletes, users, setUsers }) {
   const [form, setForm] = useState({ name: "", cedula: "", birthDate: "", category: "Mini Basket (8-12 años)", uniformNumber: "", position: "", size: "", photo: "", repName: "", repCedula: "", repPhone: "", repEmail: "", repRelation: "Padre" });
+  const [credentials, setCredentials] = useState({ username: "", password: "" });
   const [msg, setMsg] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const fileRef = useRef();
@@ -40,6 +41,17 @@ export default function RegisterPage({ athletes, setAthletes }) {
       return; 
     }
 
+    if (!credentials.username || !credentials.password) {
+      setMsg("Debes crear un usuario y contraseña para el atleta/representante");
+      return;
+    }
+
+    // Verificar que el username no exista
+    if (users.find(u => u.username === credentials.username)) {
+      setMsg("Ese nombre de usuario ya existe. Escoge otro.");
+      return;
+    }
+
     setMsg("⏳ Subiendo imagen y guardando datos...");
 
     let photoUrl = form.photo;
@@ -50,13 +62,27 @@ export default function RegisterPage({ athletes, setAthletes }) {
       }
     }
 
-    const newAthlete = { ...form, photo: photoUrl, id: generateId(), status: "activo", createdAt: new Date().toISOString() };
-    const updated = [newAthlete, ...athletes];
+    const athleteId = generateId();
+    const newAthlete = { ...form, photo: photoUrl, id: athleteId, status: "activo", createdAt: new Date().toISOString() };
+    const updatedAthletes = [newAthlete, ...athletes];
     
-    setAthletes(updated);
-    await saveData("lobos-athletes", updated);
+    setAthletes(updatedAthletes);
+    await saveData("lobos-athletes", updatedAthletes);
+
+    // Crear cuenta de usuario vinculada al atleta
+    const newUser = {
+      id: generateId(),
+      username: credentials.username,
+      password: credentials.password,
+      role: "user",
+      athleteId: athleteId
+    };
+    const updatedUsers = [...users, newUser];
+    setUsers(updatedUsers);
+    await saveData("lobos-users", updatedUsers);
 
     setForm({ name: "", cedula: "", birthDate: "", category: "Mini Basket (8-12 años)", uniformNumber: "", position: "", size: "", photo: "", repName: "", repCedula: "", repPhone: "", repEmail: "", repRelation: "Padre" });
+    setCredentials({ username: "", password: "" });
     setImageFile(null);
     
     setMsg("✅ Atleta registrado exitosamente");
@@ -115,6 +141,12 @@ export default function RegisterPage({ athletes, setAthletes }) {
           { value: "Padre", label: "Padre" }, { value: "Madre", label: "Madre" }, { value: "Tío/a", label: "Tío/a" },
           { value: "Abuelo/a", label: "Abuelo/a" }, { value: "Otro", label: "Otro" }
         ]} />
+        <div style={{ gridColumn: "1 / -1" }}>
+          <h4 style={{ color: "#c4a35a", fontFamily: "'Bebas Neue', sans-serif", margin: "18px 0 10px", letterSpacing: 1 }}>🔐 Acceso a la App</h4>
+          <p style={{ fontSize: 12, color: "#64748b", marginBottom: 10 }}>El representante usará estas credenciales para entrar a la app y ver pagos.</p>
+        </div>
+        <Input label="Usuario" value={credentials.username} onChange={e => setCredentials(c => ({ ...c, username: e.target.value }))} placeholder="Ej: jperez" />
+        <Input label="Contraseña" value={credentials.password} onChange={e => setCredentials(c => ({ ...c, password: e.target.value }))} placeholder="Mínimo 4 caracteres" />
       </div>
 
       <div style={{ marginTop: 20 }}>
