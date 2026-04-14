@@ -43,13 +43,41 @@ export default function AthletesPage({ athletes, setAthletes, payments, isAdmin 
   const isBirthday = selected ? getDaysUntilBirthday(selected.birthDate) === 0 : false;
   const age = selected ? getAge(selected.birthDate) + (isBirthday ? 0 : 0) : 0;
 
-  // --- FUNCIONES DE CUMPLEAÑOS ---
+  // Convierte imagen a base64 via fetch (funciona con Firebase Storage)
+  const imageToBase64 = async (url) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      return null;
+    }
+  };
+
   const shareBirthdayCard = async () => {
     if (!cardRef.current) return;
     setIsCapturing(true);
     try {
+      // Convertir todas las fotos dentro de la card a base64
+      const images = cardRef.current.querySelectorAll("img");
+      const originals = [];
+      for (const img of images) {
+        const src = img.src;
+        if (src && !src.startsWith("data:")) {
+          originals.push({ img, src });
+          const b64 = await imageToBase64(src);
+          if (b64) img.src = b64;
+        }
+      }
+
       const canvas = await html2canvas(cardRef.current, { 
         useCORS: true, 
+        allowTaint: true,
         backgroundColor: '#0a0a1a',
         scale: 2
       });
@@ -58,6 +86,9 @@ export default function AthletesPage({ athletes, setAthletes, payments, isAdmin 
       link.href = image;
       link.download = `Cumpleanos_Lobos_${selected.name.replace(/\s+/g, '_')}.png`;
       link.click();
+
+      // Restaurar URLs originales
+      originals.forEach(({ img, src }) => { img.src = src; });
     } catch (error) {
       console.error("Error al generar la imagen:", error);
     }
@@ -193,7 +224,13 @@ export default function AthletesPage({ athletes, setAthletes, payments, isAdmin 
               /* === BARAJITA NORMAL (sin cumpleaños) === */
               <>
                 <div ref={cardRef} style={{ width: "100%", maxWidth: 380, borderRadius: 20, overflow: 'hidden', border: `3px solid #c4a35a`, background: '#0d0d1a', boxShadow: '0 20px 60px rgba(0,0,0,.6)', position: 'relative', marginBottom: 20 }}>
-                  <div style={{ position: 'relative', height: 360, background: selected.photo ? `url(${selected.photo}) center 15% / cover no-repeat` : `linear-gradient(135deg, #1a1a2e, #0d0d1a)`, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '20px' }}>
+                  <div style={{ position: 'relative', height: 360, background: 'linear-gradient(135deg, #1a1a2e, #0d0d1a)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '20px', overflow: 'hidden' }}>
+                    {selected.photo && (
+                      <img src={selected.photo} alt={selected.name} style={{
+                        position: 'absolute', inset: 0, width: '100%', height: '100%',
+                        objectFit: 'cover', objectPosition: 'center 15%', zIndex: 0
+                      }} />
+                    )}
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 30%, transparent 60%, rgba(0,0,0,0.95) 100%)', zIndex: 0 }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(105deg,transparent 40%,rgba(255,255,255,.08) 45%,rgba(255,255,255,.2) 50%,rgba(255,255,255,.08) 55%,transparent 60%)', backgroundSize: '200% 100%', animation: 'cardShine 4s ease-in-out infinite', pointerEvents: 'none', zIndex: 1 }} />
 

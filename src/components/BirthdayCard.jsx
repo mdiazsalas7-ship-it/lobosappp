@@ -149,11 +149,19 @@ export default function BirthdayCard({ athlete, cardRef }) {
         {/* === FOTO PRINCIPAL === */}
         <div style={{ 
           position: 'relative', height: 400, 
-          background: photo ? `url(${photo}) center 15% / cover no-repeat` : 'linear-gradient(135deg, #1a1a2e, #0d0d1a)',
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '16px 20px'
+          background: 'linear-gradient(135deg, #1a1a2e, #0d0d1a)',
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '16px 20px',
+          overflow: 'hidden'
         }}>
+          {/* Foto como <img> para que html2canvas la capture */}
+          {photo && (
+            <img src={photo} alt={name} style={{
+              position: 'absolute', inset: 0, width: '100%', height: '100%',
+              objectFit: 'cover', objectPosition: 'center 15%', zIndex: 0
+            }} />
+          )}
           {/* Overlay gradiente suave — respeta la foto */}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.05) 55%, rgba(0,0,0,0.85) 85%, rgba(0,0,0,0.95) 100%)', zIndex: 0 }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.05) 55%, rgba(0,0,0,0.85) 85%, rgba(0,0,0,0.95) 100%)', zIndex: 1 }} />
           
           {/* Shine effect */}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(105deg,transparent 40%,rgba(255,255,255,.06) 45%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.06) 55%,transparent 60%)', backgroundSize: '200% 100%', animation: 'cardShine 4s ease-in-out infinite', pointerEvents: 'none', zIndex: 1 }} />

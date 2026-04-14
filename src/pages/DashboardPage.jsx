@@ -22,13 +22,41 @@ export default function DashboardPage({ athletes, payments, news, gallery = [], 
     getDaysUntilBirthday(a.birthDate) - getDaysUntilBirthday(b.birthDate)
   );
 
-  // Función para capturar y compartir la barajita desde el Dashboard
+  // Convierte imagen a base64 via fetch (funciona con Firebase Storage)
+  const imageToBase64 = async (url) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      return null;
+    }
+  };
+
   const shareBirthdayCard = async () => {
     if (!cardRef.current) return;
     setIsCapturing(true);
     try {
+      // Convertir fotos a base64 antes de capturar
+      const images = cardRef.current.querySelectorAll("img");
+      const originals = [];
+      for (const img of images) {
+        const src = img.src;
+        if (src && !src.startsWith("data:")) {
+          originals.push({ img, src });
+          const b64 = await imageToBase64(src);
+          if (b64) img.src = b64;
+        }
+      }
+
       const canvas = await html2canvas(cardRef.current, { 
         useCORS: true, 
+        allowTaint: true,
         backgroundColor: '#0a0a1a',
         scale: 2 
       });
@@ -37,6 +65,9 @@ export default function DashboardPage({ athletes, payments, news, gallery = [], 
       link.href = image;
       link.download = `Cumpleanos_Lobos_${selectedBday.name.replace(/\s+/g, '_')}.png`;
       link.click();
+
+      // Restaurar URLs originales
+      originals.forEach(({ img, src }) => { img.src = src; });
     } catch (error) {
       console.error("Error al generar la imagen:", error);
     }
