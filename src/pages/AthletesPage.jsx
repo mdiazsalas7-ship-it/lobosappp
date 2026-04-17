@@ -130,6 +130,16 @@ export default function AthletesPage({ athletes, setAthletes, payments, isAdmin 
     setIsSaving(false);
   };
 
+  const deleteAthlete = async () => {
+    if (!selected) return;
+    if (!window.confirm(`¿Estás seguro de que deseas BORRAR a ${selected.name}? Esta acción no se puede deshacer.`)) return;
+    const updatedList = athletes.filter(a => a.id !== selected.id);
+    setAthletes(updatedList);
+    await saveData("lobos-athletes", updatedList);
+    setSelected(null);
+    setIsEditing(false);
+  };
+
   return (
     <div>
       <style>{`
@@ -190,6 +200,7 @@ export default function AthletesPage({ athletes, setAthletes, payments, isAdmin 
                   <div style={{ marginTop: 6 }}>
                     <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 6, background: statusStyle.bg, color: statusStyle.text, fontWeight: 600, marginRight: 6 }}>{statusStyle.label}</span>
                     <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 6, background: "#1a1a3a", color: "#6699ff", fontWeight: 600 }}>Dorsal #{a.uniformNumber || "N/A"}</span>
+                    {a.exonerado && <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 6, background: "#0d2818", color: "#34d399", fontWeight: 600, marginLeft: 6 }}>Exonerado</span>}
                   </div>
                 </div>
               </div>
@@ -216,6 +227,11 @@ export default function AthletesPage({ athletes, setAthletes, payments, isAdmin 
                   {isAdmin && (
                     <Btn style={{ flex: 1, background: '#1e2d40', color: '#eee', fontSize: 13 }} onClick={startEditing}>
                       ✏️ Editar
+                    </Btn>
+                  )}
+                  {isAdmin && (
+                    <Btn variant="danger" style={{ fontSize: 13, padding: "12px" }} onClick={deleteAthlete}>
+                      🗑
                     </Btn>
                   )}
                 </div>
@@ -274,8 +290,11 @@ export default function AthletesPage({ athletes, setAthletes, payments, isAdmin 
 
                 {isAdmin && (
                   <div style={{ display: 'flex', gap: 12, width: '100%', maxWidth: 380 }}>
-                    <Btn style={{ flex: 1, background: '#1e2d40', color: '#eee', fontSize: 13 }} onClick={startEditing}>
+                    <Btn style={{ flex: 2, background: '#1e2d40', color: '#eee', fontSize: 13 }} onClick={startEditing}>
                       ✏️ Editar Datos
+                    </Btn>
+                    <Btn variant="danger" style={{ flex: 1, fontSize: 13 }} onClick={deleteAthlete}>
+                      🗑 Borrar
                     </Btn>
                   </div>
                 )}

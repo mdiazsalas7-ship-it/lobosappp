@@ -12,6 +12,7 @@ export default function DashboardPage({ athletes, payments, news, gallery = [], 
   const total = athletes.length;
   const active = athletes.filter(a => a.status === "activo").length;
   const morosos = athletes.filter(a => {
+    if (a.status !== "activo" || a.exonerado) return false;
     const p = payments.filter(pp => pp.athleteId === a.id);
     const now = new Date();
     const currentMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;

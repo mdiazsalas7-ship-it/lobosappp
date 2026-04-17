@@ -9,10 +9,12 @@ import AdminPage from "./pages/AdminPage";
 import GalleryPage from "./pages/GalleryPage";
 import NewsPage from "./pages/NewsPage";
 import UserHomePage from "./pages/UserHomePage";
+import ConvocatoriaPage from "./pages/ConvocatoriaPage";
 
 const ADMIN_TABS = [
   { id: "Dashboard", label: "Inicio", icon: "📊" },
   { id: "Atletas", label: "Atletas", icon: "🏀" },
+  { id: "Convocatoria", label: "Convocatoria", icon: "📋" },
   { id: "Registrar", label: "Registro", icon: "📝" },
   { id: "Administrativo", label: "Admin", icon: "💰" },
   { id: "Noticias", label: "Noticias", icon: "📰" },
@@ -185,7 +187,8 @@ export default function App() {
         {/* ADMIN PAGES */}
         {tab === "Dashboard" && isAdmin && <DashboardPage athletes={athletes} payments={payments} news={news} gallery={gallery} setTab={setTab} setAthletes={setAthletes} />}
         {tab === "Atletas" && <AthletesPage athletes={athletes} setAthletes={setAthletes} payments={payments} isAdmin={isAdmin} />}
-        {tab === "Registrar" && isAdmin && <RegisterPage athletes={athletes} setAthletes={setAthletes} users={users} setUsers={setUsers} />}
+        {tab === "Convocatoria" && isAdmin && <ConvocatoriaPage athletes={athletes} news={news} setNews={setNews} />}
+        {tab === "Registrar" && isAdmin && <RegisterPage athletes={athletes} setAthletes={setAthletes} users={users} setUsers={setUsers} payments={payments} setPayments={setPayments} />}
         {tab === "Administrativo" && isAdmin && <AdminPage athletes={athletes} payments={payments} setPayments={setPayments} paymentProofs={paymentProofs} setPaymentProofs={setPaymentProofs} users={users} setUsers={setUsers} />}
         {tab === "Noticias" && <NewsPage news={news} setNews={setNews} athletes={athletes} isAdmin={isAdmin} />}
         {tab === "Galeria" && <GalleryPage gallery={gallery} setGallery={setGallery} isAdmin={isAdmin} />}

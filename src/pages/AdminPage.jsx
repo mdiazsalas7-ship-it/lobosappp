@@ -22,8 +22,8 @@ export default function AdminPage({ athletes, payments, setPayments, paymentProo
   const activeAthletes = athletes.filter(a => a.status === "activo");
   const getPaymentForMonth = (athleteId, month) => payments.find(p => p.athleteId === athleteId && p.month === month);
 
-  const morosos = activeAthletes.filter(a => !getPaymentForMonth(a.id, selMonth));
-  const solventes = activeAthletes.filter(a => getPaymentForMonth(a.id, selMonth));
+  const morosos = activeAthletes.filter(a => !a.exonerado && !getPaymentForMonth(a.id, selMonth));
+  const solventes = activeAthletes.filter(a => a.exonerado || getPaymentForMonth(a.id, selMonth));
 
   const pendingProofs = (paymentProofs || []).filter(p => p.status === "pendiente");
 
